@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - review.nautible.com
+  resources:
+  - mergerequests
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - review.nautible.com
+  resources:
+  - mergerequests/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - review.nautible.com
+  resources:
+  - mergerequests/status
+  verbs:
+  - get
+  - patch
+  - update

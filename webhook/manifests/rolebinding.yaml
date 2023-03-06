@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gitlab-webhook-rb
+  namespace: gitlab-webhook
+subjects:
+  - kind: ServiceAccount
+    name: gitlab-webhook-sa
+    namespace: gitlab-webhook
+roleRef:
+  kind: Role
+  name: gitlab-webhook-role
+  apiGroup: rbac.authorization.k8s.io

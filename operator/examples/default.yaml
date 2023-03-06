@@ -1,0 +1,11 @@
+apiVersion: review.nautible.com/v1alpha1
+kind: MergeRequest
+metadata:
+  name: sample-mr
+  namespace: operator-system
+spec:
+  name: demo1
+  application: demo1pj1
+  baseUrl: "http://gitlab-webservice-default.gitlab.svc.cluster.local:8181"
+  manifestPath: "/"
+  targetRevision: "HEAD"

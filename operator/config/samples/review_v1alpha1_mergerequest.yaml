@@ -1,0 +1,12 @@
+apiVersion: review.nautible.com/v1alpha1
+kind: MergeRequest
+metadata:
+  labels:
+    app.kubernetes.io/name: mergerequest
+    app.kubernetes.io/instance: mergerequest-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: mergerequest-sample
+spec:
+  # TODO(user): Add fields here

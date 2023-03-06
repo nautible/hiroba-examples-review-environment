@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-receiver
+  namespace: gitlab-webhook
+  labels:
+    app.kubernetes.io/name: webhook-receiver
+    app.kubernetes.io/instance: webhook-receiver
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: webhook-receiver
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: webhook-receiver
+        app.kubernetes.io/instance: webhook-receiver
+        app.kubernetes.io/component: app
+    spec:
+      serviceAccountName: gitlab-webhook-sa
+      containers:
+      - name: webhook-receiver
+        image: webhook-receiver:v0.0.1
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: WEBHOOK_TOKEN
+          value: usagisan
+        - name: BASE_URL
+          value: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181
+        - name: MANIFEST_PATH
+          value: /manifests/overlays/dev/
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /healthz
+          failureThreshold: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            port: 8080
+            path: /healthz
+          failureThreshold: 10
+          periodSeconds: 30

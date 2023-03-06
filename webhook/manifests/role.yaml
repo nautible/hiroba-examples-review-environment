@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: gitlab-webhook
+  name: gitlab-webhook-role
+rules:
+  - apiGroups: ["review.nautible.com"]
+    resources: ["mergerequests"]
+    verbs: ["*"]

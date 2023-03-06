@@ -1,0 +1,27 @@
+# permissions for end users to view mergerequests.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: mergerequest-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: operator
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: mergerequest-viewer-role
+rules:
+- apiGroups:
+  - review.nautible.com
+  resources:
+  - mergerequests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - review.nautible.com
+  resources:
+  - mergerequests/status
+  verbs:
+  - get

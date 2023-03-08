@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -72,15 +71,15 @@ func main() {
 	zap.ReplaceGlobals(logger)
 
 	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		zap.S().Infow("healthz start")
+		zap.S().Infoln("healthz start")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Health Check OK")
 	})
 	http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
-		zap.S().Infow("webhook start Method : " + r.Method)
+		zap.S().Infoln("webhook start Method : " + r.Method)
 		c, err := NewClient()
 		if err != nil {
-			zap.S().Fatalw("InternalServerError")
+			zap.S().Fatalln("InternalServerError")
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "InternalServerError")
 			return
@@ -121,10 +120,10 @@ func main() {
 			application := mergeRequest.Project.Name
 			group := mergeRequest.Project.Namespace
 			if state == "opened" && action == "open" {
-				zap.S().Infow("create MergeRequestResource")
+				zap.S().Infoln("create MergeRequestResource")
 				err = createCrd(r.Context(), c, group, application, target)
 			} else {
-				zap.S().Infow("delete MergeRequestResource")
+				zap.S().Infoln("delete MergeRequestResource")
 				err = deleteCrd(r.Context(), c, group, application, target)
 			}
 			if err != nil {
@@ -133,7 +132,7 @@ func main() {
 				fmt.Fprintf(w, "InternalServerError")
 				return
 			}
-			zap.S().Infow("SendMessage Complete")
+			zap.S().Infoln("SendMessage Complete")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "SendMessage Complete")
 		default:
@@ -164,7 +163,7 @@ func checkStateAndAction(state string, action string) bool {
 		return true
 	}
 	if state == "closed" && action == "close" {
-		// マージリクエスト削除時
+		// マージリクエストクローズ時
 		return true
 	}
 	// 上記以外のWebhookは無視する
@@ -187,8 +186,6 @@ func NewClient() (client *Client, err error) {
 			return nil, err
 		}
 	}
-
-	// create the clientset
 	clientset, err := dynamic.NewForConfig(config)
 	if err != nil {
 		return nil, err
@@ -205,9 +202,6 @@ func exists(filename string) bool {
 }
 
 func createCrd(ctx context.Context, c *Client, groupName string, applicationName string, target string) error {
-	if target == "" {
-		return errors.New("target revision not found")
-	}
 	resource := schema.GroupVersionResource{Group: "review.nautible.com", Version: "v1alpha1", Resource: "mergerequests"}
 	manifest := createManifest(groupName, applicationName, target)
 	result, err := c.clientset.Resource(resource).Namespace("operator-system").Create(ctx, manifest, metav1.CreateOptions{})
@@ -219,9 +213,6 @@ func createCrd(ctx context.Context, c *Client, groupName string, applicationName
 }
 
 func deleteCrd(ctx context.Context, c *Client, groupName string, applicationName string, target string) error {
-	if target == "" {
-		return errors.New("target revision not found")
-	}
 	resource := schema.GroupVersionResource{Group: "review.nautible.com", Version: "v1alpha1", Resource: "mergerequests"}
 	name := fmt.Sprintf("%s-%s-%s", groupName, applicationName, strings.Replace(target, "/", "-", -1))
 	err := c.clientset.Resource(resource).Namespace("operator-system").Delete(ctx, name, metav1.DeleteOptions{})

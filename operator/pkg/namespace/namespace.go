@@ -22,7 +22,7 @@ func NewNameSpaceService(mr *reviewv1alpha1.MergeRequest) *NameSpaceService {
 func (p *NameSpaceService) CreateNamespace(ctx context.Context, r client.Client) error {
 	name := p.Spec.Name
 	logger := log.FromContext(ctx)
-	logger.Info("3. Create Namespace name : " + name)
+	logger.Info("Create Namespace name : " + name)
 	ns := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
@@ -33,14 +33,14 @@ func (p *NameSpaceService) CreateNamespace(ctx context.Context, r client.Client)
 	// 初めてアプリケーションをデプロイするときにネームスペースも作成
 	if apierrors.IsNotFound(err) {
 		if err := r.Create(ctx, ns); err != nil {
-			logger.Error(err, "3. namespace create error, if not create a new one. Failed to create new Namespace", "Namespace", ns.Name)
+			logger.Error(err, "namespace create error, if not create a new one. Failed to create new Namespace", "Namespace", ns.Name)
 			return err
 		}
 		return nil
 	} else if err != nil {
-		logger.Error(err, "3. Fetch the Namespace instance. Failed to fetch namespace")
+		logger.Error(err, "Fetch the Namespace instance. Failed to fetch namespace")
 		return err
 	}
-	logger.Info("3. Fetch the Namespace instance. found namespace")
+	logger.Info("Fetch the Namespace instance. found namespace")
 	return nil
 }

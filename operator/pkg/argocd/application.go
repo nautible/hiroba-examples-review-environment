@@ -38,11 +38,11 @@ func (p *ApplicationService) Create(ctx context.Context, client client.Client, n
 
 func (p *ApplicationService) Delete(ctx context.Context, client client.Client, found *argocdv1alpha1.Application) error {
 	logger := log.FromContext(ctx)
-	logger.Info("4. Delete Application name : " + found.Name)
+	logger.Info("Delete Application name : " + found.Name)
 
 	err := client.Delete(ctx, found)
 	if err != nil {
-		logger.Error(err, "4. Check if the Application delete error", "Application", found.Name)
+		logger.Error(err, "Check if the Application delete error", "Application", found.Name)
 		return err
 	}
 	return nil
@@ -58,7 +58,7 @@ func (p *ApplicationService) createApp(name string, groupName string, applicatio
 			Source:               source(p.Spec.BaseUrl, groupName, applicationName, p.Spec.ManifestPath, p.Spec.TargetRevision),
 			Destination:          *destination(groupName, "https://kubernetes.default.svc", ""),
 			Project:              "default",
-			SyncPolicy:           syncPolicy(true, true, false), // いったん固定
+			SyncPolicy:           syncPolicy(true, true, false),
 			IgnoreDifferences:    nil,
 			Info:                 nil,
 			RevisionHistoryLimit: nil,
@@ -71,7 +71,7 @@ func (p *ApplicationService) createApp(name string, groupName string, applicatio
 func source(baseUrl string, groupName string, applicationName string, manifestPath string, targetRevision string) *argocdv1alpha1.ApplicationSource {
 	repoURL := fmt.Sprintf("%s/%s/%s.git", baseUrl, groupName, applicationName)
 	if manifestPath == "" {
-		manifestPath = "/manifests/overlays/dev/" // default
+		manifestPath = "/" // default
 	}
 	if targetRevision == "" {
 		targetRevision = "HEAD" // default

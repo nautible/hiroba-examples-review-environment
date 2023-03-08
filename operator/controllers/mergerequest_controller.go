@@ -80,7 +80,7 @@ func (r *MergeRequestReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		}
 	}
 
-	// 9. deletion timestampがあれば関連リソースをすべて削除
+	// 3. deletion timestampがあれば関連リソースをすべて削除
 	if !mr.ObjectMeta.DeletionTimestamp.IsZero() {
 		if controllerutil.ContainsFinalizer(mr, finalizerName) {
 			r.delete(ctx, mr)
@@ -89,41 +89,41 @@ func (r *MergeRequestReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		controllerutil.RemoveFinalizer(mr, finalizerName)
 		err = r.Update(ctx, mr)
 		if err != nil {
-			logger.Info("9. RemoveFinalizer Error name : " + mr.Spec.Name)
+			logger.Info("RemoveFinalizer Error name : " + mr.Spec.Name)
 			return ctrl.Result{}, err
 		}
-		logger.Info("9. Delete Complete : " + mr.Spec.Name)
+		logger.Info("Delete Complete : " + mr.Spec.Name)
 		return ctrl.Result{}, nil
 	}
 
-	// 3. MergeRequestリソースのnameに従いプロジェクト用のNamespaceを作成
+	// 4. MergeRequestリソースのnameに従いプロジェクト用のNamespaceを作成
 	namespaceSvc := namespace.NewNameSpaceService(mr)
 	namespaceSvc.CreateNamespace(ctx, r.Client)
 
 	// グループ-プロジェクト-ブランチで名前を作る
 	name := fmt.Sprintf("%s-%s-%s", mr.Spec.Name, mr.Spec.Application, strings.Replace(mr.Spec.TargetRevision, "/", "-", -1))
 
-	// 4. Application作成
+	// 5. Application作成
 	applicationSvc := argocd.NewApplicationService(mr)
 	applicationFound := &argocdv1alpha1.Application{}
 	err = r.Get(ctx, types.NamespacedName{Name: name, Namespace: "argocd"}, applicationFound)
 	if err != nil && apierrors.IsNotFound(err) {
-		logger.Info("6. Application Create")
+		logger.Info("Application Create")
 		applicationSvc.Create(ctx, r.Client, name)
 	} else if err != nil {
-		logger.Error(err, "6. Application Get Error")
+		logger.Error(err, "Application Get Error")
 		return ctrl.Result{}, err
 	}
 
-	// 5. Ingress(VirtualService)作成
+	// 6. Ingress(VirtualService)作成
 	virtualServiceSvc := ingress.NewVirtualService(mr)
 	virtualserviceFound := &istioclient.VirtualService{}
 	err = r.Get(ctx, types.NamespacedName{Name: name, Namespace: mr.Spec.Name}, virtualserviceFound)
 	if err != nil && apierrors.IsNotFound(err) {
-		logger.Info("7. VirtualService Create")
+		logger.Info("VirtualService Create")
 		virtualServiceSvc.Create(ctx, r.Client, name)
 	} else if err != nil {
-		logger.Error(err, "7. VirtualService Get Error")
+		logger.Error(err, "VirtualService Get Error")
 		return ctrl.Result{}, err
 	}
 

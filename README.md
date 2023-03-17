@@ -1,8 +1,6 @@
 # hiroba-examples-review-environment
 
-オブジェクト広場 オペレーターを用いたレビュー環境の自動構築用サンプルコード
-
-オブジェクトの広場 [Kubernetesオペレーターパターンの活用](https://www.ogis-ri.co.jp/otc/hiroba/technical/kubernetes_use/part9.html) 確認用コードになります。※ オブジェクトの広場の記事は2023/3/28公開予定
+本リポジトリはオブジェクトの広場 [Kubernetesオペレーターパターンの活用](https://www.ogis-ri.co.jp/otc/hiroba/technical/kubernetes_use/part9.html) 確認用コードになります。※ オブジェクトの広場の記事は2023/3/28公開予定
 
 ## 動作環境
 

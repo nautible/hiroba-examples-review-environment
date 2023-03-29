@@ -65,10 +65,10 @@ func (r *MergeRequestReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	mr := &reviewv1alpha1.MergeRequest{}
 	err := r.Get(ctx, req.NamespacedName, mr)
 	if apierrors.IsNotFound(err) {
-		logger.Info("1. Fetch the MergeRequest instance. MergeRequest resource not found. Ignoring since object must be deleted")
+		logger.Info("Fetch the MergeRequest instance. MergeRequest resource not found. Ignoring since object must be deleted")
 		return ctrl.Result{}, nil
 	} else if err != nil {
-		logger.Error(err, "1. Fetch the MergeRequest instance. Failed to get MergeRequest")
+		logger.Error(err, "Fetch the MergeRequest instance. Failed to get MergeRequest")
 		return ctrl.Result{}, err
 	}
 

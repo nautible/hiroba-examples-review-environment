@@ -58,7 +58,7 @@ type MergeRequestReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
 func (r *MergeRequestReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
-	logger.Info("0. start Reconcile mergerequest_controller")
+	logger.Info("start Reconcile mergerequest_controller")
 	finalizerName := "mergerequest.review.nautible.com"
 
 	// 1. MergeRequestリソースの取得
